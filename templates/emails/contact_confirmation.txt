@@ -1,0 +1,13 @@
+Hi {{ name }},
+
+Thank you for contacting {{ SITE_NAME }}!
+
+We have received your message regarding "{{ subject }}" and will get back to you shortly.
+
+Your Message:
+{{ message }}
+
+Submitted on: {{ date }}
+
+Best regards,
+{{ SITE_NAME }} Team

@@ -1,0 +1,10 @@
+New contact form submission received.
+
+Name: {{ name }}
+Email: {{ email }}
+Subject: {{ subject }}
+Message:
+{{ message }}
+
+Submitted on: {{ date }}
+

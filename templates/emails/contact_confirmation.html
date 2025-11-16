@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Contact Confirmation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        background-color: #f9f9fb;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 25px;
+        border-left: 5px solid #1b5e20;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+        text-align: center;
+      }
+      h2 {
+        color: #1b5e20;
+        margin-bottom: 15px;
+      }
+      p {
+        margin-bottom: 10px;
+      }
+      .message {
+        padding: 12px;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+        white-space: pre-line;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Thank You for Contacting {{ SITE_NAME }}!</h2>
+      <p>Hi {{ name }},</p>
+      <p>
+        We have received your message regarding "<strong>{{ subject }}</strong>"
+        and will get back to you shortly.
+      </p>
+      <div class="message">{{ message }}</div>
+      <p><strong>Submitted on:</strong> {{ date }}</p>
+      <p>Best regards,<br />{{ SITE_NAME }} Team</p>
+    </div>
+  </body>
+</html>

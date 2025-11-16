@@ -1,0 +1,48 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>New Contact Form Submission</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        background-color: #f9f9fb;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 25px;
+        border-left: 5px solid #1b5e20;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+      }
+      h2 {
+        color: #1b5e20;
+        margin-bottom: 15px;
+      }
+      p {
+        margin-bottom: 10px;
+      }
+      .message {
+        padding: 12px;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+        white-space: pre-line;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>New Contact Form Submission</h2>
+      <p><strong>Name:</strong> {{ name }}</p>
+      <p><strong>Email:</strong> {{ email }}</p>
+      <p><strong>Subject:</strong> {{ subject }}</p>
+      <p><strong>Message:</strong></p>
+      <div class="message">{{ message }}</div>
+      <p><strong>Submitted on:</strong> {{ date }}</p>
+    </div>
+  </body>
+</html>
