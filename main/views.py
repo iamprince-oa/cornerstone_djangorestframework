@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,11 +6,15 @@ from .serializers import ContactMessageSerializer
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
-import logging
 from datetime import datetime, timedelta
 from django.utils import timezone
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # This file defines the views for the portfolio application.
@@ -43,11 +46,6 @@ class index(APIView):
 
 
 # This view handles the about page.
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-
 class about(APIView):
     def get(self, request):
         # Detailed description for the about page
@@ -58,10 +56,10 @@ class about(APIView):
 class services(APIView):
     def get(self, request):
         services = [
-            "Selling of land",
-            "Selling of building properties",
+            "Selling of lands",
+            "Selling of homes",
             "Renting of apartments",
-            "Building construction",
+            "Construction",
         ]
 
         return Response(
@@ -75,19 +73,7 @@ logger = logging.getLogger(__name__)
 
 
 # API view for handling contact form submissions
-from datetime import timedelta
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework import status
-import logging
-
-logger = logging.getLogger(__name__)
-
-
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 @permission_classes([AllowAny])
 def contact(request):
     """
