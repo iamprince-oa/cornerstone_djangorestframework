@@ -57,7 +57,7 @@ class services(APIView):
         services = [
             "Selling of lands",
             "Selling of homes",
-            "Renting of apartments",
+            "Renting of apartments, homes and offices",
             "Construction",
         ]
 
