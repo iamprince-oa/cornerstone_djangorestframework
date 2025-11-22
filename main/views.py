@@ -109,18 +109,20 @@ def contact(request):
         admin_email = EmailMultiAlternatives(
             subject=admin_subject,
             body=admin_body,
-            from_email=f"{submission.name} <{settings.DEFAULT_FROM_EMAIL}>",  # Shows user name
+            from_email=f"{submission.name} <{submission.email}>",  # Shows user name
             to=[settings.ADMIN_EMAIL],
             reply_to=[submission.email],  # Replies go to user
         )
         admin_email.send(fail_silently=False)
 
         # -------- User confirmation --------
-        user_subject = f"Your message has been received - {settings.SITE_NAME}"
+        user_subject = (
+            f"Cornerstone Development and Construction Has Received Your Message"
+        )
         user_body = (
             f"Hi {submission.name},\n\n"
-            f"Thank you for contacting {settings.SITE_NAME}! "
-            f"We received your message and will get back to you shortly.\n\n"
+            f"Thank you for contacting Cornerstone Development And Construction!"
+            f"We received your message and will get back to you shortly, Thank you.\n\n"
             f"Your message:\nSubject: {submission.subject}\nMessage: {submission.message}\n\n"
             f"Best regards,\n{settings.SITE_NAME}"
         )
@@ -128,7 +130,7 @@ def contact(request):
         user_email = EmailMultiAlternatives(
             subject=user_subject,
             body=user_body,
-            from_email=f"{submission.name} <{settings.DEFAULT_FROM_EMAIL}>",  # Your site email
+            from_email=f"<{settings.DEFAULT_FROM_EMAIL}>",  # Your site email
             to=[submission.email],
         )
         user_email.send(fail_silently=False)
