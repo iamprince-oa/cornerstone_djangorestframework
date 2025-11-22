@@ -72,23 +72,15 @@ logger = logging.getLogger(__name__)
 
 
 # API view for handling contact form submissions
-@api_view(["POST", "GET"])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def contact(request):
-    """
-    Handle contact form submission:
-    - Saves message to DB
-    - Sends admin notification
-    - Sends user confirmation
-    - Sets session data for thank-you page
-    """
     serializer = ContactMessageSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     submission = serializer.save()
 
-    # Build dictionary for API response & session
     submission_dict = {
         "name": submission.name,
         "email": submission.email,
@@ -98,49 +90,64 @@ def contact(request):
         "site_name": settings.SITE_NAME,
     }
 
-    # Store in session for thank-you page (10 min expiry)
+    # store in session for thank-you page
     request.session["recent_submission"] = submission_dict
-    request.session.set_expiry(timedelta(minutes=10))
+    request.session.set_expiry(600)
     request.session.modified = True
 
-    # Send emails (optional: keep for HTML/plain text)
     try:
-        # Admin email
-        admin_email = EmailMultiAlternatives(
-            subject=f"New Contact: {submission.subject[:50]}",
-            body=f"New contact submission:\n\nName: {submission.name}\nEmail: {submission.email}\nSubject: {submission.subject}\nMessage: {submission.message}\nDate: {submission_dict['date']}",
-            from_email=f"{settings.SITE_NAME} <{settings.DEFAULT_FROM_EMAIL}>",
-            to=[settings.ADMIN_EMAIL],
-            reply_to=[f"{submission.name} <{submission.email}>"],
+        # -------- Admin notification --------
+        admin_subject = f"New Contact Submission: {submission.subject[:50]}"
+        admin_body = (
+            f"New message from {submission.name}\n\n"
+            f"Email: {submission.email}\n"
+            f"Subject: {submission.subject}\n\n"
+            f"Message:\n{submission.message}\n\n"
+            f"Date: {submission_dict['date']}"
         )
-        admin_email.send()
 
-        # User confirmation
+        admin_email = EmailMultiAlternatives(
+            subject=admin_subject,
+            body=admin_body,
+            from_email=f"{submission.name} <{settings.DEFAULT_FROM_EMAIL}>",  # Shows user name
+            to=[settings.ADMIN_EMAIL],
+            reply_to=[submission.email],  # Replies go to user
+        )
+        admin_email.send(fail_silently=False)
+
+        # -------- User confirmation --------
+        user_subject = f"Your message has been received - {settings.SITE_NAME}"
+        user_body = (
+            f"Hi {submission.name},\n\n"
+            f"Thank you for contacting {settings.SITE_NAME}! "
+            f"We received your message and will get back to you shortly.\n\n"
+            f"Your message:\nSubject: {submission.subject}\nMessage: {submission.message}\n\n"
+            f"Best regards,\n{settings.SITE_NAME}"
+        )
+
         user_email = EmailMultiAlternatives(
-            subject=f"Thanks for contacting {settings.SITE_NAME}!",
-            body=f"Hi {submission.name},\n\nThanks for reaching out! We received your message:\n\nSubject: {submission.subject}\nMessage: {submission.message}\n\nWe'll get back to you soon.\n\n- {settings.SITE_NAME}",
-            from_email=f"{settings.SITE_NAME} <{settings.DEFAULT_FROM_EMAIL}>",
+            subject=user_subject,
+            body=user_body,
+            from_email=f"{submission.name} <{settings.DEFAULT_FROM_EMAIL}>",  # Your site email
             to=[submission.email],
         )
-        user_email.send(fail_silently=True)
-
-        logger.info(f"Contact form submitted by {submission.email}")
+        user_email.send(fail_silently=False)
 
         return Response(
             {
                 "submission": submission_dict,
-                "message": "Your message has been sent successfully!",
+                "message": "Message received and confirmation email sent.",
                 "redirect": "/thank-you",
             },
             status=status.HTTP_201_CREATED,
         )
 
     except Exception as e:
-        logger.error(f"Email failed for contact submission {submission.id}: {str(e)}")
+        logger.error(f"Email failed for submission {submission.id}: {str(e)}")
         return Response(
             {
                 "submission": submission_dict,
-                "warning": "Message saved, but confirmation email failed to send.",
+                "warning": "Saved, but email sending failed.",
                 "redirect": "/thank-you",
             },
             status=status.HTTP_200_OK,
