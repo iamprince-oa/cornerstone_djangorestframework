@@ -115,7 +115,7 @@ def contact(request):
         )
         admin_email.send(fail_silently=False)
 
-        # -------- User confirmation --------
+        # User confirmation
         user_subject = (
             f"Cornerstone Development and Construction Has Received Your Message"
         )
