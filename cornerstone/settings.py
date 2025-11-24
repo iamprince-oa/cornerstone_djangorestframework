@@ -110,7 +110,9 @@ DATABASES = {
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
+SENDGRID_API_KEY = (
+    "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"
+)
 
 SITE_NAME = "Cornerstone Development And Construction"
 
