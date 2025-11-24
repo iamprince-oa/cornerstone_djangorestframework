@@ -110,9 +110,8 @@ DATABASES = {
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = (
-    "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"
-)
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
+
 
 SITE_NAME = "Cornerstone Development And Construction"
 
@@ -122,7 +121,7 @@ SITE_NAME = "Cornerstone Development And Construction"
 # EMAIL_USE_SSL = False
 
 EMAIL_HOST_USER = "cornerstonedevelopmentcon@gmail.com"
-# EMAIL_HOST_PASSWORD = "wwtxjnwzwmmuppjw"
+# EMAIL_HOST_PASSWORD = ""
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ADMIN_EMAIL = EMAIL_HOST_USER
