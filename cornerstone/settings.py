@@ -115,12 +115,12 @@ SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
 SITE_NAME = "Cornerstone Development And Construction"
 
 # EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
 
 EMAIL_HOST_USER = "cornerstonedevelopmentcon@gmail.com"
-EMAIL_HOST_PASSWORD = "wwtxjnwzwmmuppjw"
+# EMAIL_HOST_PASSWORD = "wwtxjnwzwmmuppjw"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ADMIN_EMAIL = EMAIL_HOST_USER
