@@ -12,8 +12,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 import logging
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, To, Content
+
 
 logger = logging.getLogger(__name__)
 
@@ -97,40 +96,45 @@ def contact(request):
     request.session.set_expiry(600)
     request.session.modified = True
 
-    sg = SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
-
     try:
-        # Admin notification
-        admin_message = Mail(
-            from_email=Email(submission.email, submission.name),  # user info
-            to_emails=To(settings.ADMIN_EMAIL),
-            subject=f"New Contact Submission: {submission.subject[:50]}",
-            plain_text_content=Content(
-                "text/plain",
-                f"New message from {submission.name}\n\n"
-                f"Email: {submission.email}\n"
-                f"Subject: {submission.subject}\n\n"
-                f"Message:\n{submission.message}\n\n"
-                f"Date: {submission_dict['date']}",
-            ),
+        # -------- Admin notification --------
+        admin_subject = f"New Contact Submission: {submission.subject[:50]}"
+        admin_body = (
+            f"New message from {submission.name}\n\n"
+            f"Email: {submission.email}\n"
+            f"Subject: {submission.subject}\n\n"
+            f"Message:\n{submission.message}\n\n"
+            f"Date: {submission_dict['date']}"
         )
-        sg.send(admin_message)
+
+        admin_email = EmailMultiAlternatives(
+            subject=admin_subject,
+            body=admin_body,
+            from_email=f"{submission.name} <{submission.email}>",  # Shows user name
+            to=[settings.ADMIN_EMAIL],
+            reply_to=[submission.email],  # Replies go to user
+        )
+        admin_email.send(fail_silently=False)
 
         # User confirmation
-        user_message = Mail(
-            from_email=Email(settings.DEFAULT_FROM_EMAIL, settings.SITE_NAME),
-            to_emails=To(submission.email),
-            subject="Cornerstone Development and Construction Has Received Your Message",
-            plain_text_content=Content(
-                "text/plain",
-                f"Hi {submission.name},\n\n"
-                f"Thank you for contacting {settings.SITE_NAME}! "
-                "We received your message and will get back to you shortly.\n\n"
-                f"Your message:\nSubject: {submission.subject}\nMessage: {submission.message}\n\n"
-                f"Best regards,\n{settings.SITE_NAME}",
-            ),
+        user_subject = (
+            f"Cornerstone Development and Construction Has Received Your Message"
         )
-        sg.send(user_message)
+        user_body = (
+            f"Hi {submission.name},\n\n"
+            f"Thank you for contacting Cornerstone Development And Construction!"
+            f"We received your message and will get back to you shortly, Thank you.\n\n"
+            f"Your message:\nSubject: {submission.subject}\nMessage: {submission.message}\n\n"
+            f"Best regards,\n{settings.SITE_NAME}"
+        )
+
+        user_email = EmailMultiAlternatives(
+            subject=user_subject,
+            body=user_body,
+            from_email=f"<{settings.DEFAULT_FROM_EMAIL}>",  # Your site email
+            to=[submission.email],
+        )
+        user_email.send(fail_silently=False)
 
         return Response(
             {
