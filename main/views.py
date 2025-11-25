@@ -97,7 +97,7 @@ def contact(request):
     request.session.modified = True
 
     try:
-        # -------- Admin notification --------
+        # Admin notification
         admin_subject = f"New Contact Submission: {submission.subject[:50]}"
         admin_body = (
             f"New message from {submission.name}\n\n"
